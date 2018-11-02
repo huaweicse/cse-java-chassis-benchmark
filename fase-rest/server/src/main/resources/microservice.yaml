@@ -2,7 +2,7 @@ cse-config-order: 100
 
 APPLICATION_ID: base-rest
 service_description:
-  name: tool
+  name: server
   version: 0.0.1
 
 cse:
@@ -37,11 +37,10 @@ cse:
 #    akskCustomCipher: default
 
   rest:
-    address: 0.0.0.0:10000
-  metrics:
-    publisher:
-      defaultLog:
-        enabled: true
+    address: 0.0.0.0:9091
+
+  uploads:
+    directory: tmp
 # 处理链配置
   handler:
     chain:
