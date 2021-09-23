@@ -5,7 +5,7 @@ service_description:
   name: client
   version: 0.0.1
 
-cse:
+servicecomb:
 
 # for local test
   service:
@@ -41,3 +41,17 @@ cse:
 
   uploads:
     directory: tmp
+
+  loadbalance:
+    retryEnabled: false
+    retryOnNext: 1
+    retryOnSame: 0
+    isolation:
+      enabled: false
+
+  request:
+    timeout: 10000
+  invocation:
+    timeout.check:
+      enabled: true
+    timeout: 10000

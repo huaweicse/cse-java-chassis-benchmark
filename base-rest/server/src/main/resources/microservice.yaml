@@ -5,7 +5,7 @@ service_description:
   name: server
   version: 0.0.1
 
-cse:
+servicecomb:
 
 # for local test
   service:
