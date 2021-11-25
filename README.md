@@ -26,10 +26,33 @@ This project provides some test scenarios to benchmark performance
 * 处理链为空。
 * 其中client监听的协议为HTTP + JSON， server监听的协议为Highway + ProtoBuffer
 
+## 测试场景五(spring-cloud-rest)
+* 请求流程：测试工具(jmeter, CPTS等） -> client -> server
+* client/server使用原生Spring Boot开发，不使用注册中心
+
+## 测试场景六(spring-cloud-huawei-rest)
+* 请求流程：测试工具(jmeter, CPTS等） -> client -> server
+* client/server使用原生Spring Boot开发，并且集成 Spring Cloud Huawei， 使用注册中心、配置管理和服务治理等功能
+
+
 ## tool
 本项目提供了一个测试工具，可以调用CSE提供的服务，方便测试。
 
 ## 历史测试数据
+### 2021-9-24
+#### 测试说明
+
+机器为PC，8U16G，在本机同时运行server, client和tool。tool开启10个线程，发送10B字节的数据，返回10B数据。
+注：性能测试结果和运行环境、应用场景等紧密相关，这个数据仅用于本地开发参考，不作为不同框架性能差异的选型度量标准。
+
+#### 测试结果
+
+测试场景|框架|客户端机器数量|线程数量|字节包大小（B）|TPS（w/s）|平均耗时(ms)|cpu利用率|网卡入流量(Mb/s)|出流量(Mb/s)|网卡入包量(/s)|出包量(/s)
+--------|------------|--------|-------|--------------|----------|-----------|--------|---------------|------------|-------------|-------|
+测试场景二|CSE|1|10|10B|5213|1.845/250.301|-|-|-|-|-|
+测试场景五|Spring Cloud|1|10|10B|6250|1.520/213.149|-|-|-|-|-|
+测试场景六|Spring Cloud|1|10|10B|5173|1.856/153.523|-|-|-|-|-|
+
 ### 2018-11-02
 
 #### 测试说明

@@ -42,9 +42,14 @@ public class ToolMain {
   }
 
   private static void runTest(String message) {
-    String result = template.postForObject("cse://client/body", message, String.class);
-    if (!message.equals(result)) {
-      throw new RuntimeException("error");
+    try {
+      String result = template.postForObject("cse://client/body", message, String.class);
+      if (!message.equals(result)) {
+        throw new RuntimeException("error");
+      }
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      throw e;
     }
   }
 }
