@@ -51,7 +51,7 @@ servicecomb:
         default: simpleLB
 
   request:
-    timeout: 10000
+    timeout: 30000
   invocation:
     timeout.check:
       enabled: true

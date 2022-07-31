@@ -30,7 +30,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.servicecomb</groupId>
-      <artifactId>registry-local</artifactId>
+      <artifactId>registry-service-center</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -7,34 +7,34 @@ service_description:
 
 servicecomb:
 
-# for local test
+  # for local test
   service:
     registry:
       address: http://127.0.0.1:30100
       instance:
         watch: false
 
-# for cloud service
-#  config:
-#    client:
-#      refreshMode: 1
-#  service:
-#    registry:
-#      address: https://cse.cn-north-1.myhwclouds.com:443
-#      instance:
-#        watch: false
-#  config:
-#    client:
-#      serverUri: https://cse.cn-north-1.myhwclouds.com:443
-#      refreshMode: 1
-#      refresh_interval: 5000
-#  monitor:
-#    client:
-#      serverUri: https://cse.cn-north-1.myhwclouds.com:443
-#  credentials:
-#    accessKey: your access key
-#    secretKey: your secret key
-#    akskCustomCipher: default
+  # for cloud service
+  #  config:
+  #    client:
+  #      refreshMode: 1
+  #  service:
+  #    registry:
+  #      address: https://cse.cn-north-1.myhwclouds.com:443
+  #      instance:
+  #        watch: false
+  #  config:
+  #    client:
+  #      serverUri: https://cse.cn-north-1.myhwclouds.com:443
+  #      refreshMode: 1
+  #      refresh_interval: 5000
+  #  monitor:
+  #    client:
+  #      serverUri: https://cse.cn-north-1.myhwclouds.com:443
+  #  credentials:
+  #    accessKey: your access key
+  #    secretKey: your secret key
+  #    akskCustomCipher: default
 
   rest:
     address: 0.0.0.0:9090
@@ -42,16 +42,64 @@ servicecomb:
   uploads:
     directory: tmp
 
-  loadbalance:
-    retryEnabled: false
-    retryOnNext: 1
-    retryOnSame: 0
-    isolation:
-      enabled: false
-
   request:
     timeout: 10000
-  invocation:
-    timeout.check:
-      enabled: true
-    timeout: 10000
+
+  ##  服务治理配置
+  # handlers
+  handler:
+    chain:
+      Provider:
+        default: qps-flowcontrol-provider
+      Consumer:
+        default: qps-flowcontrol-consumer,loadbalance,instance-isolation-consumer,instance-bulkhead-consumer
+#        default: qps-flowcontrol-consumer,loadbalance,instance-bulkhead-consumer
+  loadbalance:
+    filter:
+      isolation:
+        enabled: false
+    isolation:
+      errorThresholdPercentage: 0
+      enableRequestThreshold: 5
+      singleTestTime: 10000
+      continuousFailureThreshold: 5
+      maxSingleTestWindow: 60000 # 为了保证在并发情况下只有一个实例放通，会锁定放通实例。这个时间表示最大锁定时间。
+      minIsolationTime: 3000 # 最短隔离时间。并发情况下，实例隔离后进行中的请求可能快速刷新隔离状态，增加最短隔离时间。
+      recoverImmediatelyWhenSuccess: true # 放通
+
+  matchGroup:
+    allOperation: |
+      matches:
+        - apiPath:
+            prefix: "/"
+  instanceIsolation:
+    allOperation: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 20
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 50
+      slowCallRateThreshold: 100
+      slowCallDurationThreshold: 3000
+      waitDurationInOpenState: 10000 
+      permittedNumberOfCallsInHalfOpenState: 10
+  retry:
+    allOperation: |
+      maxAttempts: 2
+      retryOnSame: 0
+  instanceBulkhead:
+    allOperation: |
+      maxConcurrentCalls: 20
+      maxWaitDuration: 1000
+  metrics:
+    window_time: 60000
+    invocation:
+      latencyDistribution: 0,1,10,100,1000
+    Consumer.invocation.slow:
+      enabled: false
+      msTime: 1000
+    Provider.invocation.slow:
+      enabled: false
+      msTime: 1000
+    publisher.defaultLog:
+      enabled: false
+      endpoints.client.detail.enabled: true

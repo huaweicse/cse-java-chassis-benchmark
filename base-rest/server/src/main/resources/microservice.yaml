@@ -36,7 +36,7 @@ servicecomb:
 #    secretKey: your secret key
 #    akskCustomCipher: default
 
-  rest:
+  highway:
     address: 0.0.0.0:9091
 
   uploads:
